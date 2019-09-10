@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <iso646.h> //incluye el macro "not"
 #include <stdbool.h>
 #include <string.h>
 #include <errno.h>
 
-#define PERIOD 5
+#define PERIOD 14
 #define CARO .8
-#define BARATO .4
+#define BARATO .2
 
 typedef struct float_arr{
 	float* arr;
@@ -59,7 +60,7 @@ int main()
 	scanf("%30s", nombre);
 	entrada= open_file( nombre, "r");
 	
-	printf("%-10s%-10s%-10s%-10s%-10s%-10s\n\n", "DÍA", "VALOR", "RESPUESTA", "GANANCIA", "PERDIDA", "ACUMULADO");//DEBUG
+	printf("%-10s%-10s%-10s%-10s%-10s%-10s\n\n", "DÍA", "VALOR", "RESPUESTA", "GANANCIA", "PERDIDA", "ACUMULADO");
 
 	//analiza un periodo inicial
 	days_passed=0;
@@ -68,6 +69,7 @@ int main()
 		fscanf(entrada, "%f", &val);
 		push_back( prices, val);
 	}
+	last_total=total;
 	
 	//mientras haya acciones que comprar	
 	while(  !feof(entrada) )
@@ -80,7 +82,6 @@ int main()
 			stoc= stocastic(max, min, prices->arr[days_passed-1] );
 			indicador= analize_data( prom, stoc, max, min);//TODO
 		}
-		last_total=total;
 		//si se ha comprado
 		if( vende )
 		{
@@ -105,6 +106,7 @@ int main()
 		push_back( prices , val);
 		days_passed++;
 		printf("%-10d%-10.2f%-10s%-10.2f%-10.2f%-10.2f\n", days_passed, val, indicador==0 ? "nada" : indicador==1 ? "compra" : "venta", last_total-total, last_total-total, total); //TODO
+		last_total=total;
 	}
 	// Informa sobre la Ganancia
 	printf("\tGANANCIA :%f", total-capital_inicial);//TODO
@@ -204,6 +206,7 @@ float maximum(float_arr* my_arr,  int first, int last)
 //encuetra el máximo en el intervalo [first, last)
 {
 	float max= my_arr->arr[first];
+
 	for(int i=first; i< last; i++)
 		if( my_arr-> arr[i] > max )
 			max= my_arr-> arr[i];
@@ -214,6 +217,7 @@ float minimum(float_arr* my_arr,  int first, int last)
 //encuentra el mínimo en el intervalo [first, last)
 {
 	float min= my_arr->arr[first];
+
 	for(int i=first; i< last; i++)
 		if( my_arr-> arr[i] < min )
 			min= my_arr-> arr[i];
@@ -231,13 +235,14 @@ float stocastic( float max, float min,  float last)
 
 criteria analize_data( float prom, float stoc, float max, float min )
 {
-	printf("prom: %10.2f\tprom/(max-min): %10.2f\tstoc: %10.2f\n", prom, prom/(max-min), stoc);//DEBUG
+	float D= (prom-min)/(max-min);
+//	printf("prom: %10.2f\tprom/(max-min): %10.2f\tstoc: %10.2f\n", prom, D, stoc);//DEBUG
 	//si la tendencia local sobrepasa al promedio y el criterio de "caro"
-	if( stoc > prom/(max-min) && stoc > CARO )
+	if( stoc > D && stoc > CARO )
 		//emite señales de venta
 		return SELL;
 //si la tendencia local es menor que el promedio y el criterio de "barato"
-	if( stoc < prom/(max-min) && stoc < BARATO )
+	if( stoc < D && stoc < BARATO )
 		//emite señales de compra
 		return BUY;
 
@@ -247,13 +252,13 @@ criteria analize_data( float prom, float stoc, float max, float min )
 void buy(float val)
 {
 	total-=val;
-	vende= false;
+	vende= not vende;
 }
 
 void sell(float val)
 {
 	total+=val;
-	vende= true;
+	vende= not vende;
 }
 
 
