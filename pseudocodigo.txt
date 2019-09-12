@@ -1,0 +1,21 @@
+ Subproceso del indicador:
+ 	de un periodo pasado, obten el promedio y la tendecia local
+ 	compara ambas,
+	si la tendencia local sobrepasa al promedio y el criterio de "caro"
+		emite señales de venta
+	si la tendencia local es menor que el promedio y el criterio de "barato"
+		emite señales de compra
+
+analiza un periodo inicial
+mientras haya acciones que comprar	
+	si se ha comprado
+		si el indicador da señales de venta
+			vende
+	si no se ha vendido
+		si el indicador da señales de compra
+			compra
+	por cada periodo
+		ingresa el precio al periodo por analizar
+		si se llega al fin de un periodo
+			llama al indicador
+		
