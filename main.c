@@ -79,6 +79,7 @@ int main()
 			max= maximum( prices, days_passed-PERIOD, days_passed);
 			min= minimum( prices, days_passed-PERIOD, days_passed);
 
+			//analiza los datos de un periodo reciente
 			stoc= stocastic(max, min, prices->arr[days_passed-1] );
 			indicador= analize_data( prom, stoc, max, min);//TODO
 		}
@@ -236,7 +237,6 @@ float stocastic( float max, float min,  float last)
 criteria analize_data( float prom, float stoc, float max, float min )
 {
 	float D= (prom-min)/(max-min);
-//	printf("prom: %10.2f\tprom/(max-min): %10.2f\tstoc: %10.2f\n", prom, D, stoc);//DEBUG
 	//si la tendencia local sobrepasa al promedio y el criterio de "caro"
 	if( stoc > D && stoc > CARO )
 		//emite señales de venta
