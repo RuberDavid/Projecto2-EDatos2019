@@ -1,4 +1,6 @@
 templete.c
+*.out
+entrada.txt
 'Estructura de Datos - Práctica_2 - Sistema de Negociación.pdf'
 a.out
 /pruebas/*
